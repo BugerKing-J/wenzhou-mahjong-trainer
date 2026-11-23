@@ -1182,6 +1182,12 @@
 
     .game-action-menu.open { display: grid; }
     .game-action-menu .game-action { width: 100%; min-height: 40px; padding: 0; }
+    .game-action-menu .game-action-back {
+      margin-bottom: 2px;
+      border-color: rgba(233, 200, 115, 0.58);
+      background: rgba(233, 200, 115, 0.16);
+      color: var(--gold-2);
+    }
 
     @keyframes claimPulse {
       0%, 100% { box-shadow: 0 0 0 3px rgba(233, 200, 115, 0.1), 0 0 20px rgba(233, 200, 115, 0.18); }
@@ -2137,6 +2143,7 @@
 
         <div id="gameActionDock" class="game-action-dock">
           <div id="gameActionMenu" class="game-action-menu" aria-hidden="true">
+            <button id="gameActionBack" class="game-action game-action-back" type="button">返回</button>
             <button class="game-action" data-game-action="chi" type="button">吃</button>
             <button class="game-action" data-game-action="pong" type="button">碰</button>
             <button class="game-action" data-game-action="kong" type="button">杠</button>
@@ -3262,6 +3269,7 @@
     const gameActionDock = document.getElementById("gameActionDock");
     const gameActionToggle = document.getElementById("gameActionToggle");
     const gameActionMenu = document.getElementById("gameActionMenu");
+    const gameActionBack = document.getElementById("gameActionBack");
     let gameActionMenuOpen = false;
     const discardModal = document.getElementById("discardModal");
     const discardModalTitle = document.getElementById("discardModalTitle");
@@ -3565,7 +3573,7 @@
       gameActionToggle.classList.toggle("open", gameActionMenuOpen);
       gameActionMenu.setAttribute("aria-hidden", gameActionMenuOpen ? "false" : "true");
       gameActionToggle.setAttribute("aria-expanded", gameActionMenuOpen ? "true" : "false");
-      gameActionToggle.setAttribute("aria-label", gameActionMenuOpen ? "收起操作菜单" : "展开操作菜单");
+      gameActionToggle.setAttribute("aria-label", gameActionMenuOpen ? "操作菜单已展开" : "展开操作菜单");
     }
 
     function renderGame() {
@@ -3578,7 +3586,6 @@
         humanHand.innerHTML = "";
         humanMelds.innerHTML = "";
         humanHandInfo.textContent = "";
-        setGameActionMenu(false);
         gameActionToggle.classList.remove("claim-highlight");
         riverRows.forEach(row => row.classList.remove("active"));
         return;
@@ -3636,7 +3643,6 @@
       currentMode = "home";
       document.body.classList.add("home-active");
       appMain.classList.remove("game-active");
-      setGameActionMenu(false);
       if (gameAITimer) {
         clearTimeout(gameAITimer);
         gameAITimer = null;
@@ -4480,19 +4486,11 @@
     gameOverNewBtn.addEventListener("click", () => { closeGameOverModal(); newGame(); });
     gameActionToggle.addEventListener("click", event => {
       event.stopPropagation();
-      setGameActionMenu(!gameActionMenuOpen);
+      if (!gameActionMenuOpen) setGameActionMenu(true);
     });
+    gameActionBack.addEventListener("click", () => setGameActionMenu(false));
     gameActionButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        setGameActionMenu(false);
-        handleGameAction(btn.dataset.gameAction);
-      });
-    });
-    document.addEventListener("click", event => {
-      if (gameActionMenuOpen && !gameActionDock.contains(event.target)) setGameActionMenu(false);
-    });
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape" && gameActionMenuOpen) setGameActionMenu(false);
+      btn.addEventListener("click", () => handleGameAction(btn.dataset.gameAction));
     });
     humanHand.addEventListener("click", event => {
       const btn = event.target.closest("[data-game-tile]");
