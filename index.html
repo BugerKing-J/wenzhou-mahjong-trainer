@@ -1128,65 +1128,30 @@
 
     .human-hand .tile-btn { width: 100%; height: auto; aspect-ratio: 0.78; }
 
-    .game-action-dock {
-      position: absolute;
-      right: 5px;
-      bottom: 204px;
-      z-index: 12;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
-    }
-
-    .game-action-toggle {
+    .game-action-inline {
       display: grid;
-      place-items: center;
-      width: 40px;
-      height: 40px;
-      padding: 0;
-      border: 1px solid rgba(233, 200, 115, 0.45);
-      border-radius: 14px 0 0 14px;
-      background: rgba(5, 21, 15, 0.98);
-      color: var(--gold-2);
-      box-shadow: 0 7px 20px rgba(0, 0, 0, 0.32);
-      cursor: pointer;
-      transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      flex: 1;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 3px;
+      min-width: 0;
+      padding: 2px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .game-action-toggle svg {
-      width: 19px;
-      height: 19px;
-      transition: transform 0.18s ease;
+    .game-action-inline .game-action {
+      min-height: 30px;
+      padding: 0 2px;
+      border-radius: 7px;
+      font-size: 12px;
     }
 
-    .game-action-toggle.open svg { transform: rotate(180deg); }
-    .game-action-toggle:hover { background: rgba(233, 200, 115, 0.16); border-color: rgba(233, 200, 115, 0.75); }
-
-    .game-action-toggle.claim-highlight {
-      border-color: rgba(233, 200, 115, 0.95);
-      background: rgba(233, 200, 115, 0.2);
+    .game-action-inline.claim-highlight {
+      border-color: rgba(233, 200, 115, 0.72);
+      background: rgba(233, 200, 115, 0.1);
+      box-shadow: 0 0 0 2px rgba(233, 200, 115, 0.08), 0 0 16px rgba(233, 200, 115, 0.18);
       animation: claimPulse 1.35s ease-in-out infinite;
-    }
-
-    .game-action-menu {
-      display: none;
-      width: 54px;
-      gap: 5px;
-      padding: 5px;
-      border: 1px solid rgba(233, 200, 115, 0.26);
-      border-radius: 13px;
-      background: rgba(5, 21, 15, 0.98);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.38);
-    }
-
-    .game-action-menu.open { display: grid; }
-    .game-action-menu .game-action { width: 100%; min-height: 40px; padding: 0; }
-    .game-action-menu .game-action-back {
-      margin-bottom: 2px;
-      border-color: rgba(233, 200, 115, 0.58);
-      background: rgba(233, 200, 115, 0.16);
-      color: var(--gold-2);
     }
 
     @keyframes claimPulse {
@@ -1859,17 +1824,35 @@
       padding: 6px;
     }
     .game-hand-head { margin-bottom: 2px; }
-    .human-area .game-hand-head { margin-bottom: 0; }
+    .human-area .game-hand-head {
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 0;
+    }
+    .human-area .game-hand-head > span { flex: 0 0 auto; }
     .human-area .melds {
       margin-top: 1px;
       min-height: 0;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      overflow-y: hidden;
+      max-height: 76px;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 4px;
+      overflow-x: hidden;
+      overflow-y: auto;
       scrollbar-width: none;
     }
     .human-area .melds:empty { display: none; }
     .human-area .melds::-webkit-scrollbar { display: none; }
+    .human-area .meld {
+      gap: 1px;
+      padding: 1px;
+    }
+    .human-area .meld .mini-tile {
+      width: 18px;
+      height: 23px;
+      border-radius: 2px;
+    }
     .human-hand { width: 98%; margin: 0 auto; gap: 3px; min-height: clamp(88px, 23vw, 130px); }
     /* Endgame space is reserved from the first turn; the page height never grows. */
     .game-panel {
@@ -1887,9 +1870,9 @@
     .human-area { flex: 0 0 auto; }
 
     .river-board {
-      height: 483px;
-      flex: 0 0 483px;
-      grid-template-rows: 116px 311px 44px;
+      height: 437px;
+      flex: 0 0 437px;
+      grid-template-rows: 116px 265px 44px;
     }
 
     #riverRow2,
@@ -1909,8 +1892,8 @@
     #riverRow0 { align-content: center; }
 
     .human-area {
-      height: 188px;
-      min-height: 188px;
+      height: 234px;
+      min-height: 234px;
       overflow: hidden;
     }
 
@@ -1926,8 +1909,8 @@
       min-height: 768px;
     }
     .human-area {
-      height: 188px;
-      min-height: 188px;
+      height: 234px;
+      min-height: 234px;
       overflow: hidden;
     }
     .human-hand {
@@ -2135,27 +2118,21 @@
           </div>
 
           <div class="human-area">
-            <div class="game-hand-head"><span>你的手牌</span><span id="humanHandInfo"></span></div>
+            <div class="game-hand-head">
+              <span>你的手牌</span>
+              <div id="gameActionBar" class="game-action-inline">
+                <button class="game-action" data-game-action="chi" type="button">吃</button>
+                <button class="game-action" data-game-action="pong" type="button">碰</button>
+                <button class="game-action" data-game-action="kong" type="button">杠</button>
+                <button class="game-action" data-game-action="hu" type="button">胡</button>
+                <button class="game-action pass" data-game-action="pass" type="button">过</button>
+              </div>
+            </div>
             <div id="humanMelds" class="melds"></div>
             <div id="humanHand" class="human-hand"></div>
           </div>
         </div>
 
-        <div id="gameActionDock" class="game-action-dock">
-          <div id="gameActionMenu" class="game-action-menu" aria-hidden="true">
-            <button id="gameActionBack" class="game-action game-action-back" type="button">返回</button>
-            <button class="game-action" data-game-action="chi" type="button">吃</button>
-            <button class="game-action" data-game-action="pong" type="button">碰</button>
-            <button class="game-action" data-game-action="kong" type="button">杠</button>
-            <button class="game-action" data-game-action="hu" type="button">胡</button>
-            <button class="game-action pass" data-game-action="pass" type="button">过</button>
-          </div>
-          <button id="gameActionToggle" class="game-action-toggle" type="button" aria-label="展开操作菜单" aria-controls="gameActionMenu" aria-expanded="false">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
-        </div>
         <div id="gameStatus" class="game-status" aria-live="polite"></div>
       </section>
 
@@ -2595,6 +2572,13 @@
       return { weight: ACQUISITION_WEIGHTS.draw, source: "自摸", claimTile };
     }
 
+    function isPlainHonorForDiscard(tile, laizi) {
+      if (tile < 27) return false;
+      if (laizi === tile) return false;
+      if (tile === HAKU && laizi !== null && laizi !== HAKU) return false;
+      return true;
+    }
+
     function roundWeightedScore(value) {
       return Math.round((Number(value) || 0) * 10) / 10;
     }
@@ -2688,16 +2672,26 @@
       for (let d = 0; d < 34; d++) {
         if (hand[d] > 0) candidates.push(analyzeDiscard(hand, d, laizi, fixedMelds, visibleOverride));
       }
+      const isolatedHonorCandidates = candidates.filter(c =>
+        hand[c.discard] === 1 && isPlainHonorForDiscard(c.discard, laizi)
+      );
+      const isolatedHonorTieScore = isolatedHonorCandidates.length > 1
+        ? Math.max(...isolatedHonorCandidates.map(c => c.weightedUkeire))
+        : null;
+      candidates.forEach(c => {
+        c.honorSingletonTie = isolatedHonorTieScore !== null && isolatedHonorCandidates.includes(c);
+        c.comparisonUkeire = c.honorSingletonTie ? isolatedHonorTieScore : c.weightedUkeire;
+      });
       candidates.sort((a, b) => {
         if (a.shantenAfter !== b.shantenAfter) return a.shantenAfter - b.shantenAfter;
-        if (a.weightedUkeire !== b.weightedUkeire) return b.weightedUkeire - a.weightedUkeire;
+        if (a.comparisonUkeire !== b.comparisonUkeire) return b.comparisonUkeire - a.comparisonUkeire;
         return a.discard - b.discard;
       });
 
       let previousKey = "";
       let rank = 0;
       candidates.forEach((c, index) => {
-        const key = c.shantenAfter + "|" + c.weightedUkeire;
+        const key = c.shantenAfter + "|" + c.comparisonUkeire;
         if (key !== previousKey) {
           rank = index + 1;
           previousKey = key;
@@ -2733,7 +2727,7 @@
     }
 
     function sameCandidate(a, b) {
-      return a && b && a.shantenAfter === b.shantenAfter && a.weightedUkeire === b.weightedUkeire;
+      return a && b && a.shantenAfter === b.shantenAfter && a.comparisonUkeire === b.comparisonUkeire;
     }
 
     function parseHandString(text) {
@@ -2888,7 +2882,7 @@
 
       const best = report.best;
       const gapShanten = chosen.shantenAfter - best.shantenAfter;
-      const gapWeighted = roundWeightedScore(best.weightedUkeire - chosen.weightedUkeire);
+      const gapWeighted = roundWeightedScore(best.comparisonUkeire - chosen.comparisonUkeire);
       const optimal = sameCandidate(chosen, best);
 
       resultPanel.classList.remove("hidden");
@@ -2904,7 +2898,8 @@
       const bestWaits = best.waitCount ? "，听 " + best.waitCount + " 个有效牌种" : "";
       if (optimal) {
         verdict.textContent = "你打 " + chosenTile + " 后为 " + shantenText(chosen.shantenAfter) +
-          "，加权进张 " + weightedScoreDetail(chosen) + chosenWaits + "。这与当前静态最优选择一致。";
+          "，加权进张 " + weightedScoreDetail(chosen) + chosenWaits + "。这与当前静态最优选择一致。" +
+          (chosen.honorSingletonTie ? " 多个单张字牌按同档处理。" : "");
       } else if (gapShanten > 0) {
         verdict.textContent = "你打 " + chosenTile + " 后为 " + shantenText(chosen.shantenAfter) +
           "；最优是打 " + bestTile + "，为 " + shantenText(best.shantenAfter) + bestWaits +
@@ -2929,7 +2924,8 @@
         "（自摸 0.2 / 吃 0.3 / 碰 0.7，同一张牌取最高权重）：<div class=\"chip-list\">" +
         chips.join("") + "</div>" +
         (chosen.hardShanten === 0 && chosen.shantenAfter === 0 ? " 当前是硬听。" :
-         chosen.shantenAfter === 0 ? " 当前是软听，成牌需要财神补位。" : "");
+         chosen.shantenAfter === 0 ? " 当前是软听，成牌需要财神补位。" : "") +
+        (chosen.honorSingletonTie ? " 多个单张字牌按同档处理。" : "");
 
       const cards = report.candidates.map(c => {
         const isBest = sameCandidate(c, best);
@@ -2937,18 +2933,19 @@
         const cardClass = [isBest ? "best" : "", isChosen ? "chosen" : ""].filter(Boolean).join(" ");
         const gap = isBest ? '<span class="good">最优</span>' :
           c.shantenAfter > best.shantenAfter ? '<span class="bad">退 ' + (c.shantenAfter - best.shantenAfter) + ' 向听</span>' :
-          '<span class="warn">少 ' + formatWeightedScore(best.weightedUkeire - c.weightedUkeire) + ' 分</span>';
+          '<span class="warn">少 ' + formatWeightedScore(best.comparisonUkeire - c.comparisonUkeire) + ' 分</span>';
         const wait = c.shantenAfter === 0 ? (c.waitCount + " 种 / " + waitTypeText(c)) : "—";
         const allChips = percentFreeText(c);
         const chips = allChips.slice(0, 6).map(item => '<span class="chip">' + item + '</span>').join("") +
           (allChips.length > 6 ? '<span class="chip gold">+' + (allChips.length - 6) + '</span>' : "");
+        const cardNote = [c.honorSingletonTie ? "字牌同档" : "", isChosen ? "你的选择" : ""].filter(Boolean).join(" · ");
         return '<div class="candidate-card ' + cardClass + '">' +
           '<div class="candidate-card-top">' +
             makeTileButton(c.discard, {}) +
             '<div class="candidate-card-title"><strong>' + tileLabel(c.discard) + '</strong><span>' + shantenText(c.shantenAfter) + ' · ' + wait + '</span></div>' +
             '<div class="candidate-card-gap">' + gap + '</div>' +
           '</div>' +
-          '<div class="candidate-card-meta"><span>加权 <b>' + formatWeightedScore(c.weightedUkeire) + '</b> 分 · ' + c.ukeireTotal + ' 张</span><span>' + (isChosen ? "你的选择" : "") + '</span></div>' +
+          '<div class="candidate-card-meta"><span>加权 <b>' + formatWeightedScore(c.weightedUkeire) + '</b> 分 · ' + c.ukeireTotal + ' 张</span><span>' + cardNote + '</span></div>' +
           '<div class="chip-list">' + chips + '</div>' +
         '</div>';
       });
@@ -3242,7 +3239,6 @@
     const gameStatus = document.getElementById("gameStatus");
     const humanHand = document.getElementById("humanHand");
     const humanMelds = document.getElementById("humanMelds");
-    const humanHandInfo = document.getElementById("humanHandInfo");
     const aiCounts = [
       document.getElementById("aiCount1"),
       document.getElementById("aiCount2"),
@@ -3266,11 +3262,7 @@
       document.getElementById("riverRow3")
     ];
     const gameActionButtons = [...document.querySelectorAll("[data-game-action]")];
-    const gameActionDock = document.getElementById("gameActionDock");
-    const gameActionToggle = document.getElementById("gameActionToggle");
-    const gameActionMenu = document.getElementById("gameActionMenu");
-    const gameActionBack = document.getElementById("gameActionBack");
-    let gameActionMenuOpen = false;
+    const gameActionBar = document.getElementById("gameActionBar");
     const discardModal = document.getElementById("discardModal");
     const discardModalTitle = document.getElementById("discardModalTitle");
     const discardModalText = document.getElementById("discardModalText");
@@ -3506,7 +3498,7 @@
       const bestDetail = shantenText(best.shantenAfter) + " · 加权 " + weightedScoreDetail(best);
       const gapText = chosen.shantenAfter > best.shantenAfter
         ? "退 " + (chosen.shantenAfter - best.shantenAfter) + " 向听"
-        : "少 " + formatWeightedScore(Math.max(0, best.weightedUkeire - chosen.weightedUkeire)) + " 分";
+        : "少 " + formatWeightedScore(Math.max(0, best.comparisonUkeire - chosen.comparisonUkeire)) + " 分";
       discardModalTitle.textContent = "这张不是最优";
       discardModalText.textContent = "你打了 " + tileLabel(chosen.discard) + "：" + chosenDetail +
         "。最优" + (bestCount > 1 ? "并列选择之一是 " : "舍牌是 ") + tileLabel(best.discard) +
@@ -3567,15 +3559,6 @@
       gameOverModal.classList.add("hidden");
     }
 
-    function setGameActionMenu(open) {
-      gameActionMenuOpen = !!open;
-      gameActionMenu.classList.toggle("open", gameActionMenuOpen);
-      gameActionToggle.classList.toggle("open", gameActionMenuOpen);
-      gameActionMenu.setAttribute("aria-hidden", gameActionMenuOpen ? "false" : "true");
-      gameActionToggle.setAttribute("aria-expanded", gameActionMenuOpen ? "true" : "false");
-      gameActionToggle.setAttribute("aria-label", gameActionMenuOpen ? "操作菜单已展开" : "展开操作菜单");
-    }
-
     function renderGame() {
       renderGameStats();
       if (!game) {
@@ -3585,8 +3568,7 @@
         gameTurn.textContent = "—";
         humanHand.innerHTML = "";
         humanMelds.innerHTML = "";
-        humanHandInfo.textContent = "";
-        gameActionToggle.classList.remove("claim-highlight");
+        gameActionBar.classList.remove("claim-highlight");
         riverRows.forEach(row => row.classList.remove("active"));
         return;
       }
@@ -3606,7 +3588,7 @@
       else if (game.phase === "missed-action") gameTurn.textContent = "错过提醒";
       else if (game.phase === "ai-turn") gameTurn.textContent = PLAYER_NAMES[game.turn] + " 行动";
       else gameTurn.textContent = "牌局结束";
-      gameActionToggle.classList.toggle("claim-highlight", game.phase === "human-claim");
+      gameActionBar.classList.toggle("claim-highlight", game.phase === "human-claim");
 
       for (let i = 0; i < 3; i++) {
         const p = i + 1;
@@ -3635,7 +3617,6 @@
       humanHand.innerHTML = handPieces.join("");
       if (animateDraw) game.animateHumanDraw = false;
       humanMelds.innerHTML = renderMeldsFor(0);
-      humanHandInfo.textContent = "暗手 " + countTotal(game.hands[0]) + " 张 · 副露 " + game.melds[0].length + " 组";
       gameStatus.textContent = game.status || "";
     }
 
@@ -4484,11 +4465,6 @@
     missedHuClose.addEventListener("click", closeMissedHuModal);
     gameOverViewBtn.addEventListener("click", closeGameOverModal);
     gameOverNewBtn.addEventListener("click", () => { closeGameOverModal(); newGame(); });
-    gameActionToggle.addEventListener("click", event => {
-      event.stopPropagation();
-      if (!gameActionMenuOpen) setGameActionMenu(true);
-    });
-    gameActionBack.addEventListener("click", () => setGameActionMenu(false));
     gameActionButtons.forEach(btn => {
       btn.addEventListener("click", () => handleGameAction(btn.dataset.gameAction));
     });
